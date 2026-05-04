@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription
+{% endblock %}
+
+{% block body %}
+	<div
+		class="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+
+		{# Logo #}
+		<div class="text-center mb-8">
+			<div class="text-blue-600 text-4xl mb-2">LOGO</div>
+			<h1 class="text-2xl font-bold text-gray-900">Créez votre compte</h1>
+			<p class="text-sm text-gray-500 mt-1">
+				Ou
+				<a href="{{ path('app_login') }}" class="text-blue-600 hover:underline">connectez-vous à votre compte</a>
+			</p>
+		</div>
+
+		{# Formulaire #}
+		<div class="bg-white rounded-[10px] shadow-sm w-md px-10 pt-8 pb-8" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+			{{ form_errors(registrationForm) }}
+			{{ form_start(registrationForm, { attr: { novalidate: 'novalidate' } }) }}
+
+			{# Prénom + Nom #}
+			<div class="flex gap-4 mb-6">
+				<div class="flex-1 flex flex-col gap-1">
+					<label class="text-[14px] font-normal text-[#364153]">Prénom</label>
+					{{ form_widget(registrationForm.first_name, {
+                        attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                    }) }}
+				</div>
+				<div class="flex-1 flex flex-col gap-1">
+					<label class="text-[14px] font-normal text-[#364153]">Nom</label>
+					{{ form_widget(registrationForm.last_name, {
+                        attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                    }) }}
+				</div>
+			</div>
+
+			{# Raison Sociale #}
+			<div class="flex flex-col gap-1 mb-6">
+				<label class="text-[14px] font-normal text-[#364153]">Raison Sociale</label>
+				{{ form_widget(registrationForm.company_name, {
+                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                }) }}
+			</div>
+
+			{# IBAN #}
+			<div class="flex flex-col gap-1 mb-6">
+				<label class="text-[14px] font-normal text-[#364153]">IBAN</label>
+				{{ form_widget(registrationForm.iban, {
+                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                }) }}
+			</div>
+
+			{# Email #}
+			<div class="flex flex-col gap-1 mb-6">
+				<label class="text-[14px] font-normal text-[#364153]">Adresse Email</label>
+				{{ form_widget(registrationForm.email, {
+                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                }) }}
+			</div>
+
+			{# Password #}
+			<div class="flex flex-col gap-1 mb-6">
+				<label class="text-[14px] font-normal text-[#364153]">Mot de passe</label>
+				{{ form_widget(registrationForm.plainPassword, {
+                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+                }) }}
+			</div>
+
+			{# Button #}
+			<button type="submit" class="w-full h-[38px] bg-[#155DFC] text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+				Créer mon compte
+			</button>
+
+			{{ form_end(registrationForm) }}
+		</div>
+	</div>
+{% endblock %}
