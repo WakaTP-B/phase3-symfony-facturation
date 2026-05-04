@@ -1,0 +1,8 @@
+{
+    "favorites.resources": [
+        {
+            "filePath": "config/packages/security.yaml",
+            "group": "Default"
+        }
+    ]
+}

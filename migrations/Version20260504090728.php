@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260503232312 extends AbstractMigration
+final class Version20260504090728 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -30,6 +30,8 @@ final class Version20260503232312 extends AbstractMigration
         $this->addSql('CREATE TABLE product (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, description CLOB NOT NULL, price NUMERIC(10, 2) NOT NULL, unit VARCHAR(20) NOT NULL)');
         $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles CLOB NOT NULL, password VARCHAR(255) NOT NULL, first_name VARCHAR(100) NOT NULL, last_name VARCHAR(100) NOT NULL, company_name VARCHAR(255) NOT NULL, iban VARCHAR(34) NOT NULL, siret VARCHAR(14) DEFAULT NULL)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON user (email)');
+        $this->addSql('CREATE TABLE messenger_messages (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, body CLOB NOT NULL, headers CLOB NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL)');
+        $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0E3BD61CE16BA31DBBF396750 ON messenger_messages (queue_name, available_at, delivered_at, id)');
     }
 
     public function down(Schema $schema): void
@@ -40,5 +42,6 @@ final class Version20260503232312 extends AbstractMigration
         $this->addSql('DROP TABLE invoice_item');
         $this->addSql('DROP TABLE product');
         $this->addSql('DROP TABLE user');
+        $this->addSql('DROP TABLE messenger_messages');
     }
 }
