@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gray-50">
+
+    {# SIDEBAR #}
+    <aside class="w-[256px] min-h-screen bg-white border-r border-[#E5E7EB] flex flex-col fixed top-0 left-0">
+
+        {# Logo #}
+        <div class="px-6 py-6 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V7"/><path d="M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8"/><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"/></svg>
+            <span class="text-[#1447E6] font-bold text-lg">FacturSaaS</span>
+        </div>
+
+        {# Navigation #}
+        <nav class="flex flex-col gap-3 px-6 flex-1">
+
+			{# Dashboard #}
+            <a href="{{ path('app_dashboard') }}"
+               class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
+               {% if app.request.attributes.get('_route') == 'app_dashboard' %}
+                   bg-[#EFF6FF] text-[#1447E6]
+               {% else %}
+                   text-[#4A5565] hover:bg-gray-50
+               {% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                Dashboard
+            </a>
+
+			{# Factures #}
+            <a href="#"
+               class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
+               {% if app.request.attributes.get('_route') == 'app_invoices' %}
+                   bg-[#EFF6FF] text-[#1447E6]
+               {% else %}
+                   text-[#4A5565] hover:bg-gray-50
+               {% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                Factures
+            </a>
+
+			{# Clients #}
+            <a href="#"
+               class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
+               {% if app.request.attributes.get('_route') == 'app_clients' %}
+                   bg-[#EFF6FF] text-[#1447E6]
+               {% else %}
+                   text-[#4A5565] hover:bg-gray-50
+               {% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Clients
+            </a>
+
+			{# Produits #}
+            <a href="#"
+               class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
+               {% if app.request.attributes.get('_route') == 'app_products' %}
+                   bg-[#EFF6FF] text-[#1447E6]
+               {% else %}
+                   text-[#4A5565] hover:bg-gray-50
+               {% endif %}">
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+                Produits
+            </a>
+
+			{# Profil #}
+            <a href="#"
+               class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
+               {% if app.request.attributes.get('_route') == 'app_profile' %}
+                   bg-[#EFF6FF] text-[#1447E6]
+               {% else %}
+                   text-[#4A5565] hover:bg-gray-50
+               {% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                Profil
+            </a>
+        </nav>
+
+        {# Profil - Logout #}
+        <div class="px-6 py-6 border-t border-[#E5E7EB]">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-[#DBEAFE] flex items-center justify-center text-[#1447E6] font-bold text-[16px]">
+                    {{ app.user.firstName | slice(0, 1) | upper }}{{ app.user.lastName | slice(0, 1) | upper }}
+                </div>
+                <div>
+                    <p class="text-[14px] text-[#101828] font-normal">{{ app.user.companyName }}</p>
+                    <p class="text-[12px] text-[#6A7282]">{{ app.user.email }}</p>
+                </div>
+            </div>
+            <a href="{{ path('app_logout') }}" class="flex items-center gap-3 text-[#E7000B] text-[16px]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    {# Main #}
+    <main class="ml-64 flex-1 p-8">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+{% endblock %}
