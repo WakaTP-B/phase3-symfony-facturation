@@ -52,9 +52,9 @@
             </a>
 
 			{# Produits #}
-            <a href="#"
+            <a href="{{ path('app_product_index')}}"
                class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
-               {% if app.request.attributes.get('_route') == 'app_products' %}
+               {% if app.request.attributes.get('_route') starts with 'app_product' %}
                    bg-[#EFF6FF] text-[#1447E6]
                {% else %}
                    text-[#4A5565] hover:bg-gray-50

@@ -1,0 +1,57 @@
+{% extends 'layout/sidebar.html.twig' %}
+
+{% block title %}
+	Ajouter un produit
+{% endblock %}
+
+{% block content %}
+	<div class="flex items-center justify-between mb-6">
+		<h1 class="text-2xl font-bold text-[#101828]">Ajouter un nouveau produit</h1>
+		<a href="{{ path('app_product_index') }}" class="text-sm text-[#4A5565] hover:text-[#101828]">
+			← Retour
+		</a>
+	</div>
+
+	<div class="bg-white rounded-[14px] border border-[#F3F4F6] p-8 max-w-2xl" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+		<h2 class="text-lg font-semibold text-[#101828] mb-6">Nouveau produit</h2>
+
+		{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+		<div class="flex flex-col gap-1 mb-4">
+			<label class="text-[14px] font-normal text-[#364153]">Nom</label>
+			{{ form_widget(form.name, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+			<span class="text-xs text-red-500">{{ form_errors(form.name) }}</span>
+		</div>
+
+		<div class="flex flex-col gap-1 mb-4">
+			<label class="text-[14px] font-normal text-[#364153]">Description</label>
+			{{ form_widget(form.description, { attr: { class: 'w-full border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500', rows: '3' } }) }}
+			<span class="text-xs text-red-500">{{ form_errors(form.description) }}</span>
+		</div>
+
+		<div class="flex gap-4 mb-6">
+			<div class="flex-1 flex flex-col gap-1">
+				<label class="text-[14px] font-normal text-[#364153]">Prix</label>
+				{{ form_widget(form.price, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+				<span class="text-xs text-red-500">{{ form_errors(form.price) }}</span>
+			</div>
+			<div class="flex-1 flex flex-col gap-1">
+				<label class="text-[14px] font-normal text-[#364153]">Unité</label>
+				{{ form_widget(form.unit, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+				<span class="text-xs text-red-500">{{ form_errors(form.unit) }}</span>
+			</div>
+		</div>
+
+		<div class="flex items-center gap-3 justify-end">
+			<a href="{{ path('app_product_index') }}" class="px-4 py-2 text-sm text-[#4A5565] border border-[#D1D5DC] rounded-lg hover:bg-gray-50">
+				Annuler
+			</a>
+			<button type="submit" class="px-4 py-2 bg-[#155DFC] text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+				Enregistrer
+			</button>
+		</div>
+
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
