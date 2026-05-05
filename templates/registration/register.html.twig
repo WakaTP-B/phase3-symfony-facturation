@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription
+{% block title %}
+	Inscription
 {% endblock %}
 
 {% block body %}
 	<div
 		class="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
 
-		{# Logo #}
+		{# Header #}
 		<div class="text-center mb-8">
 			<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2">
 				<path d="M12 17V7"/>
@@ -23,22 +24,25 @@
 		{# Formulaire #}
 		<div class="bg-white rounded-[10px] shadow-sm w-md px-10 pt-8 pb-8" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
 
-			{{ form_errors(registrationForm) }}
 			{{ form_start(registrationForm, { attr: { novalidate: 'novalidate' } }) }}
+
+			{{ form_errors(registrationForm) }}
 
 			{# Prénom + Nom #}
 			<div class="flex gap-4 mb-6">
 				<div class="flex-1 flex flex-col gap-1">
 					<label class="text-[14px] font-normal text-[#364153]">Prénom</label>
 					{{ form_widget(registrationForm.first_name, {
-                        attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                    }) }}
+                attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+            }) }}
+					<span class="text-xs text-red-500">{{ form_errors(registrationForm.first_name) }}</span>
 				</div>
 				<div class="flex-1 flex flex-col gap-1">
 					<label class="text-[14px] font-normal text-[#364153]">Nom</label>
 					{{ form_widget(registrationForm.last_name, {
-                        attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                    }) }}
+                attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+            }) }}
+					<span class="text-xs text-red-500">{{ form_errors(registrationForm.last_name) }}</span>
 				</div>
 			</div>
 
@@ -46,32 +50,36 @@
 			<div class="flex flex-col gap-1 mb-6">
 				<label class="text-[14px] font-normal text-[#364153]">Raison Sociale</label>
 				{{ form_widget(registrationForm.company_name, {
-                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                }) }}
+            attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+        }) }}
+				<span class="text-xs text-red-500">{{ form_errors(registrationForm.company_name) }}</span>
 			</div>
 
 			{# IBAN #}
 			<div class="flex flex-col gap-1 mb-6">
 				<label class="text-[14px] font-normal text-[#364153]">IBAN</label>
 				{{ form_widget(registrationForm.iban, {
-                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                }) }}
+            attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+        }) }}
+				<span class="text-xs text-red-500">{{ form_errors(registrationForm.iban) }}</span>
 			</div>
 
 			{# Email #}
 			<div class="flex flex-col gap-1 mb-6">
 				<label class="text-[14px] font-normal text-[#364153]">Adresse Email</label>
 				{{ form_widget(registrationForm.email, {
-                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                }) }}
+            attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+        }) }}
+				<span class="text-xs text-red-500">{{ form_errors(registrationForm.email) }}</span>
 			</div>
 
 			{# Password #}
 			<div class="flex flex-col gap-1 mb-6">
 				<label class="text-[14px] font-normal text-[#364153]">Mot de passe</label>
 				{{ form_widget(registrationForm.plainPassword, {
-                    attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
-                }) }}
+            attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' }
+        }) }}
+				<span class="text-xs text-red-500">{{ form_errors(registrationForm.plainPassword) }}</span>
 			</div>
 
 			{# Button #}
