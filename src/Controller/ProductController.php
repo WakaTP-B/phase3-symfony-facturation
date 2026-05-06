@@ -38,8 +38,7 @@ final class ProductController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_product_index', ['edit' => $editId]);
             }
-
-            $form = $form->createView();
+            
         } elseif ($showNewForm) {
             // Create
             $product = new Product();
@@ -51,8 +50,6 @@ final class ProductController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_product_index', ['new' => 1]);
             }
-
-            $form = $form->createView();
         }
 
         return $this->render('product/index.html.twig', [

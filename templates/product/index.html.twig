@@ -47,7 +47,7 @@
 
 			<div class="flex gap-4 mb-6">
 				<div class="flex-1 flex flex-col gap-1">
-					<label class="text-[14px] font-normal text-[#364153]">Prix</label>
+					<label class="text-[14px] font-normal text-[#364153]">Prix (€)</label>
 					{{ form_widget(form.price, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
 					<span class="text-xs text-red-500">{{ form_errors(form.price) }}</span>
 				</div>
@@ -88,7 +88,7 @@
 
 				<span class="text-[16px] text-[#101828]">{{ product.name }}</span>
 				<span class="text-[16px] text-[#4A5565]">{{ product.description }}</span>
-				<span class="text-[16px] text-[#101828]">{{ product.price }}€ /
+				<span class="text-[16px] text-[#101828]">{{ product.price }} € /
 					{{ product.unit }}</span>
 
 				<div class="flex items-center justify-end gap-3">

@@ -32,8 +32,13 @@
 
 		<div class="flex gap-4 mb-6">
 			<div class="flex-1 flex flex-col gap-1">
-				<label class="text-[14px] font-normal text-[#364153]">Prix</label>
-				{{ form_widget(form.price, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+				<label class="text-[14px] font-normal text-[#364153]">Prix (€)</label>
+				{{ form_widget(form.price, { attr: { 
+					class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
+					type: 'number',
+					step: '0.01',
+					min: '0'
+					} }) }}
 				<span class="text-xs text-red-500">{{ form_errors(form.price) }}</span>
 			</div>
 			<div class="flex-1 flex flex-col gap-1">
