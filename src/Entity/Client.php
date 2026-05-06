@@ -78,6 +78,16 @@ class Client
         return $this->phone;
     }
 
+    public function getFormattedPhone(): string
+    {
+        if (!$this->phone) return '';
+        $digits = preg_replace('/\D/', '', $this->phone);
+        if (strlen($digits) === 10) {
+            return implode(' ', str_split($digits, 2));
+        }
+        return $this->phone;
+    }
+
     public function setPhone(string $phone): static
     {
         $this->phone = $phone;
@@ -88,6 +98,15 @@ class Client
     public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    public function getFormattedAddress(): string
+    {
+        if (!$this->address) return '';
+
+        // ALL <br> ==> virgule + espace
+        $formatted = preg_replace('/[\r\n]+/', ', ', trim($this->address));
+        return $formatted;
     }
 
     public function setAddress(string $address): static
