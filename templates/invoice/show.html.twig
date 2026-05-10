@@ -1,0 +1,172 @@
+{% extends 'layout/sidebar.html.twig' %}
+
+{% block title %}Facture
+	{{ invoice.number }}
+{% endblock %}
+
+{% block content %}
+
+	{# Header #}
+	<div class="mb-6 max-w-4xl mx-auto">
+		<a href="{{ path('app_invoice_index') }}" class="flex items-center gap-1 text-sm text-[#4A5565] hover:text-[#101828] mb-4">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+			Retour aux factures
+		</a>
+
+		<div class="flex items-start justify-between">
+			<div>
+				<div class="flex items-center gap-3 mb-1">
+					<h1 class="text-2xl font-bold text-[#101828]">Facture
+						{{ invoice.number }}</h1>
+					{% if invoice.status == 'draft' %}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#4A5565]">
+							<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+							Brouillon
+						</span>
+					{% elseif invoice.status == 'pending_payment' %}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#FFEDD4] text-[#F54900]">
+							<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+							En attente
+						</span>
+					{% elseif invoice.status == 'paid' %}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#DCFCE7] text-[#00A63E]">
+							<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+							Payée
+						</span>
+					{% endif %}
+				</div>
+				<p class="text-sm text-[#4A5565]">Date :
+					{{ invoice.createdAt | date('d/m/Y') }}</p>
+			</div>
+
+			{# Boutons statut #}
+			<div class="flex items-center gap-2">
+				{% if invoice.status == 'draft' %}
+					<form method="post" action="{{ path('app_invoice_validate', {'id': invoice.id}) }}">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-green-100">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+							Valider la facture
+						</button>
+					</form>
+					<form method="post" action="{{ path('app_invoice_delete', {'id': invoice.id}) }}" onsubmit="return confirm('Supprimer cette facture ?')">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ invoice.id) }}">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#E7000B] text-sm rounded-[10px] hover:bg-red-50">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+							Supprimer
+						</button>
+					</form>
+				{% elseif invoice.status == 'pending_payment' %}
+					<a href="#" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+						PDF
+					</a>
+					<a href="#" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+						Envoyer
+					</a>
+					<form method="post" action="{{ path('app_invoice_pay', {'id': invoice.id}) }}" onsubmit="return confirm('Marquer cette facture comme payée ?')">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-green-100">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+							Valider le paiement
+						</button>
+					</form>
+				{% elseif invoice.status == 'paid' %}
+					<a href="#" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+						PDF
+					</a>
+					<a href="#" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+						Envoyer
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	{# Card facture #}
+	<div
+		class="bg-white rounded-[14px] border border-[#E5E7EB] p-[41px] max-w-4xl mx-auto" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+		{# Infos entreprise + FACTURE #}
+		<div class="flex justify-between mb-6">
+			<div>
+				<p class="font-bold text-[#101828] text-base">{{ invoice.user.companyName }}</p>
+				<p class="text-sm text-[#4A5565]">{{ invoice.user.firstName }}
+					{{ invoice.user.lastName }}</p>
+				<p class="text-sm text-[#4A5565]">{{ invoice.user.email }}</p>
+			</div>
+			<div class="text-right">
+				<p class="font-bold text-[#101828] text-lg tracking-widest">FACTURE</p>
+				<p class="text-sm text-[#4A5565]">N°
+					{{ invoice.number }}</p>
+				<p class="text-sm text-[#4A5565]">Date :
+					{{ invoice.createdAt | date('d/m/Y') }}</p>
+			</div>
+		</div>
+
+		{# Section FACTURÉ À #}
+		<div class="flex justify-end mb-6">
+			<div class="bg-[#F9FAFB] border border-[#F3F4F6] rounded-[10px] p-6 w-[384px]">
+				<p class="text-xs text-[#4A5565] uppercase tracking-wider mb-2">Facturé à</p>
+				<p class="font-bold text-[#101828] text-base mb-2">{{ invoice.client.name }}</p>
+				<p class="text-sm text-[#4A5565]">{{ invoice.client.address | replace({'\n': ', ', '\r': ''}) }}</p>
+				<p class="text-sm text-[#4A5565]">{{ invoice.client.email }}</p>
+				{% if invoice.client.siret %}
+					<p class="text-sm text-[#4A5565]">SIRET :
+						{{ invoice.client.siret }}</p>
+				{% endif %}
+			</div>
+		</div>
+
+		{# Tableau des lignes #}
+		<div class="mb-8">
+			<div class="grid grid-cols-[3fr_1fr_1fr_1fr] gap-4 pb-2 border-b-2 border-[#101828]">
+				<span class="text-sm font-bold text-[#101828]">Description</span>
+				<span class="text-sm font-bold text-[#101828] text-center">Qté</span>
+				<span class="text-sm font-bold text-[#101828] text-right">Prix Unitaire</span>
+				<span class="text-sm font-bold text-[#101828] text-right">Total TTC</span>
+			</div>
+
+			{% for item in invoice.invoiceItems %}
+				<div class="grid grid-cols-[3fr_1fr_1fr_1fr] gap-4 py-4 border-b border-[#F3F4F6]">
+					<div>
+						<p class="text-sm font-medium text-[#101828]">{{ item.product.name }}</p>
+						<p class="text-xs text-[#4A5565]">{{ item.product.description }}</p>
+					</div>
+					<span class="text-sm text-[#4A5565] text-center">{{ item.quantity }}</span>
+					<span class="text-sm text-[#4A5565] text-right">{{ item.product.price }}
+						€</span>
+					<span class="text-sm font-bold text-[#101828] text-right">{{ (item.product.price * item.quantity) | number_format(2, '.', ' ') }}
+						€</span>
+				</div>
+			{% endfor %}
+		</div>
+
+		{# Totaux #}
+		<div class="flex justify-end mb-8">
+			<div class="w-64">
+				<div class="flex justify-between py-2">
+					<span class="text-sm text-[#4A5565]">Total HT</span>
+					<span class="text-sm text-[#4A5565]">{{ invoice.totalTtc | number_format(2, '.', ' ') }}
+						€</span>
+				</div>
+				<div class="flex justify-between py-2 border-t-2 border-[#101828]">
+					<span class="text-sm font-bold text-[#101828]">Total TTC</span>
+					<span class="text-lg font-bold text-[#101828]">{{ invoice.totalTtc | number_format(2, '.', ' ') }}
+						€</span>
+				</div>
+				<p class="text-xs text-[#4A5565] text-right mt-1">TVA non applicable, art. 293 B du CGI</p>
+			</div>
+		</div>
+
+		{# Conditions de paiement #}
+		<div class="border-t border-[#F3F4F6] pt-6">
+			<p class="text-sm font-medium text-[#101828] mb-2">Conditions de paiement</p>
+			<p class="text-xs text-[#4A5565]">Coordonnées bancaires pour le paiement :</p>
+			<p class="text-xs text-[#4A5565]">{{ invoice.user.iban }}</p>
+		</div>
+
+	</div>
+
+{% endblock %}

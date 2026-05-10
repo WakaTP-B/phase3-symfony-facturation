@@ -17,7 +17,8 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#00A63E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
 			</div>
 			<p class="text-sm text-[#6A7282] mb-1">Chiffre d'affaires (Payé)</p>
-			<p class="text-2xl font-bold text-[#101828]">0 €</p>
+			<p class="text-2xl font-bold text-[#101828]">{{ ca | number_format(2, '.', ' ') }}
+				€</p>
 		</div>
 
 		{# Factures en attente #}
@@ -26,7 +27,7 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#F54900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
 			</div>
 			<p class="text-sm text-[#6A7282] mb-1">Factures en attente de paiement</p>
-			<p class="text-2xl font-bold text-[#101828]">0</p>
+			<p class="text-2xl font-bold text-[#101828]">{{ total_invoices }}</p>
 		</div>
 
 		{# Total Clients #}
@@ -35,7 +36,7 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 			</div>
 			<p class="text-sm text-[#6A7282] mb-1">Total Clients</p>
-			<p class="text-2xl font-bold text-[#101828]">0</p>
+			<p class="text-2xl font-bold text-[#101828]">{{ total_clients }}</p>
 		</div>
 
 		{# Total Produits #}
@@ -44,7 +45,7 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#9810FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
 			</div>
 			<p class="text-sm text-[#6A7282] mb-1">Total Produits</p>
-			<p class="text-2xl font-bold text-[#101828]">0</p>
+			<p class="text-2xl font-bold text-[#101828]">{{ total_products }}</p>
 		</div>
 
 	</div>
@@ -85,7 +86,7 @@
 	{# Menu services #}
 	<div class="grid grid-cols-3 gap-6">
 
-		<a href="#" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-blue-50 transition-colors">
+		<a href="{{ path('app_invoice_new') }}" data-turbo="false" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-blue-50 transition-colors">
 			<div>
 				<p class="text-[#155DFC] font-semibold text-sm">Créer une facture</p>
 				<p class="text-[#6A7282] text-xs mt-1">Nouvelle prestation</p>
@@ -93,7 +94,7 @@
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 		</a>
 
-		<a href="#" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-gray-100 transition-colors">
+		<a href="{{ path('app_client_index', {'new': 1}) }}" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-gray-100 transition-colors">
 			<div>
 				<p class="text-[#101828] font-semibold text-sm">Ajouter un client</p>
 				<p class="text-[#6A7282] text-xs mt-1">Gérer le répertoire</p>
@@ -101,7 +102,7 @@
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#6A7282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 		</a>
 
-		<a href="#" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-gray-100 transition-colors">
+		<a href="{{ path('app_product_index', {'new': 1}) }}" class="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[14px] p-6 flex items-center justify-between hover:bg-gray-100 transition-colors">
 			<div>
 				<p class="text-[#101828] font-semibold text-sm">Créer un produit / service</p>
 				<p class="text-[#6A7282] text-xs mt-1">Enrichir le catalogue pour rédiger rapidement vos factures</p>

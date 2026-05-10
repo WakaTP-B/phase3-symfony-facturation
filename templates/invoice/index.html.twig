@@ -67,14 +67,12 @@
 				{% endif %}
 
 				<div class="flex items-center justify-end gap-2">
-					<a href="#" class="flex items-center gap-1 text-xs text-[#4A5565] hover:text-[#101828]">
-					{# <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}" class="flex items-center gap-1 text-xs text-[#4A5565] hover:text-[#101828]"> #}
+					<a href="{{ path('app_invoice_show', {'id': invoice.id}) }}" class="flex items-center gap-1 text-xs text-[#4A5565] hover:text-[#101828]">
 						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
 						Détails
 					</a>
 					{% if invoice.status == 'draft' %}
-						<a href="#">
-						{# <a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}"> #}
+						<a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
 						</a>
 					{% endif %}
