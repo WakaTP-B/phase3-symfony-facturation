@@ -1,0 +1,58 @@
+{% extends 'layout/sidebar.html.twig' %}
+
+{% block title %}
+	Mon Profil
+{% endblock %}
+
+{% block content %}
+
+	<h1 class="text-2xl font-bold text-[#101828] mb-6">Mon Profil</h1>
+
+	{% for message in app.flashes('success') %}
+		<div class="mb-4 px-4 py-3 bg-[#DCFCE7] text-[#00A63E] rounded-lg text-sm">
+			{{ message }}
+		</div>
+	{% endfor %}
+
+	<div class="bg-white rounded-[14px] border border-[#F3F4F6] p-6 w-2xl" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+		{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+		<div class="flex flex-col gap-1 mb-4">
+			<label class="text-[14px] font-normal text-[#364153]">Raison Sociale</label>
+			{{ form_widget(form.company_name, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+			<p class="text-xs text-[#6A7282]">Le nom de votre entreprise qui apparaîtra sur vos factures.</p>
+			<span class="text-xs text-red-500">{{ form_errors(form.company_name) }}</span>
+		</div>
+
+		<div class="flex flex-col gap-1 mb-4">
+			<label class="text-[14px] font-normal text-[#364153]">Numéro SIRET (Optionnel)</label>
+			{{ form_widget(form.siret, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+			<span class="text-xs text-red-500">{{ form_errors(form.siret) }}</span>
+		</div>
+
+		<div class="flex flex-col gap-1 mb-4">
+			<label class="text-[14px] font-normal text-[#364153]">IBAN</label>
+			{{ form_widget(form.iban, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+			<p class="text-xs text-[#6A7282]">Compte bancaire qui recevra les virements de vos clients.</p>
+			<span class="text-xs text-red-500">{{ form_errors(form.iban) }}</span>
+		</div>
+
+		<div class="flex flex-col gap-1 mb-6">
+			<label class="text-[14px] font-normal text-[#364153]">Conditions Générales de Vente (CGV)</label>
+			{{ form_widget(form.cgv, { attr: { 
+                class: 'w-full border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
+                rows: '5',
+                placeholder: 'Ces conditions apparaîtront en bas de vos factures PDF...'
+            } }) }}
+		</div>
+
+		<button type="submit" class="px-4 py-2 bg-[#155DFC] text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+			Enregistrer les modifications
+		</button>
+
+		{{ form_end(form) }}
+
+	</div>
+
+{% endblock %}

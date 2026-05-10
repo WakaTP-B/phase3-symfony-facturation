@@ -64,7 +64,7 @@
             </a>
 
 			{# Profil #}
-            <a href="#"
+            <a href="{{ path('app_profile')}}"
                class="flex items-center gap-3 px-3 h-11 rounded-[10px] text-[16px] font-normal
                {% if app.request.attributes.get('_route') == 'app_profile' %}
                    bg-[#EFF6FF] text-[#1447E6]
