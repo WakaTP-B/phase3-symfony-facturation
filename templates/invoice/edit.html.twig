@@ -1,0 +1,136 @@
+{% extends 'layout/sidebar.html.twig' %}
+
+{% block title %}Modifier la facture {{ invoice.number }}{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-[#101828]">Modifier une facture</h1>
+    <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}" class="text-sm text-[#4A5565] hover:text-[#101828]">← Retour</a>
+</div>
+
+<turbo-frame id="invoice-form">
+    {{ form_start(form, { attr: { 
+        novalidate: 'novalidate', 
+        'data-controller': 'invoice',
+        'data-action': 'submit->invoice#validateForm'
+    } }) }}
+
+    {# Informations Générales #}
+    <div class="bg-white rounded-[14px] border border-[#F3F4F6] p-6 mb-4"
+         style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+        <h2 class="text-base font-semibold text-[#101828] mb-4">Informations Générales</h2>
+        <div class="flex gap-4">
+            <div class="flex-1 flex flex-col gap-1">
+                <label class="text-[14px] font-normal text-[#364153]">Client</label>
+                {{ form_widget(form.client, { attr: { class: 'w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500' } }) }}
+                <span class="text-xs text-red-500">{{ form_errors(form.client) }}</span>
+            </div>
+            <div class="flex-1 flex flex-col gap-1">
+                <label class="text-[14px] font-normal text-[#364153]">Date de la facture</label>
+                <input type="text" value="{{ invoice.createdAt | date('d/m/Y') }}" disabled
+                       class="w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm bg-gray-50 text-[#4A5565]">
+            </div>
+        </div>
+    </div>
+
+    {# Lignes de la facture #}
+    <div class="bg-white rounded-[14px] border border-[#F3F4F6] mb-4"
+         style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+        <div class="px-6 py-4 border-b border-[#F3F4F6]">
+            <h2 class="text-base font-semibold text-[#101828]">Lignes de la facture</h2>
+        </div>
+
+        {# Header tableau #}
+        <div class="grid grid-cols-[2fr_1fr_1fr_1fr_40px] gap-4 px-6 py-3 border-b border-[#F3F4F6]">
+            <span class="text-[14px] font-bold text-[#101828]">Produit / Service</span>
+            <span class="text-[14px] font-bold text-[#101828] text-center">Qté</span>
+            <span class="text-[14px] font-bold text-[#101828] text-right">Prix Unitaire</span>
+            <span class="text-[14px] font-bold text-[#101828] text-right">Total</span>
+            <span></span>
+        </div>
+
+        {# Lignes existantes pré-remplies #}
+        <div data-invoice-target="items" class="px-6"
+             data-existing-lines="{{ invoice.invoiceItems | map(item => {
+                 'name': item.product.name,
+                 'price': item.product.price,
+                 'quantity': item.quantity
+             }) | json_encode }}">
+        </div>
+
+        {# Formulaire d'ajout #}
+        <div class="px-6 py-4 border-t border-[#F3F4F6]">
+            <div class="grid grid-cols-[2fr_1fr_1fr_auto] gap-3 items-end">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[14px] font-normal text-[#364153]">Sélectionner un produit</label>
+                    <select data-invoice-target="productSelect"
+                            data-action="change->invoice#selectProduct"
+                            class="w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Sélectionner un produit</option>
+                        {% for product in products %}
+                            <option value="{{ product.name }}" data-price="{{ product.price }}">
+                                {{ product.name }} — {{ product.price }} €
+                            </option>
+                        {% endfor %}
+                        <option value="__custom__">+ Saisir manuellement</option>
+                    </select>
+                    <input type="text"
+                           data-invoice-target="productName"
+                           placeholder="Nom du produit / service"
+                           class="w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[14px] font-normal text-[#364153]">Quantité</label>
+                    <input type="number" min="1" value="1"
+                           data-invoice-target="quantity"
+                           class="w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[14px] font-normal text-[#364153]">Prix unitaire (€)</label>
+                    <input type="number" step="0.01" min="0"
+                           data-invoice-target="productPrice"
+                           readonly
+                           class="w-full h-[42px] border border-[#D1D5DC] rounded-lg px-3 py-2 text-sm bg-gray-50 text-[#4A5565] cursor-not-allowed no-arrows">
+                </div>
+                <button type="button"
+                        data-action="invoice#addLine"
+                        class="h-[42px] px-4 bg-[#155DFC] text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    Ajouter
+                </button>
+            </div>
+        </div>
+
+        {# Total #}
+        <div class="px-6 py-4 border-t border-[#F3F4F6] flex justify-end items-center gap-4">
+            <span class="text-sm font-semibold text-[#101828]">Total Facture (TTC) :</span>
+            <span class="text-xl font-bold text-[#155DFC]" data-invoice-target="total">0.00 €</span>
+        </div>
+
+    </div>
+
+    {# Boutons #}
+    <div class="flex items-center justify-end gap-3">
+        <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}"
+           data-turbo-frame="_top"
+           class="px-4 py-2 text-sm text-[#4A5565] border border-[#D1D5DC] rounded-lg hover:bg-gray-50">
+            Annuler
+        </a>
+        <button type="submit" name="save_as" value="draft"
+                data-turbo-frame="_top"
+                class="px-4 py-2 text-sm border border-[#155DFC] text-[#155DFC] rounded-lg hover:bg-blue-50">
+            Enregistrer en brouillon
+        </button>
+        <button type="submit" name="save_as" value="pending"
+                data-turbo-frame="_top"
+                class="px-4 py-2 bg-[#155DFC] text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+            Enregistrer et valider
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+</turbo-frame>
+
+{% endblock %}

@@ -5,11 +5,9 @@ use App\Entity\Client;
 use App\Entity\Invoice;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class InvoiceType extends AbstractType
 {
@@ -20,25 +18,10 @@ class InvoiceType extends AbstractType
                 'class' => Client::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Choisir un client',
+                'label' => false,
                 'constraints' => [
-                    new NotBlank(message: 'Veuillez choisir un client'),
+                    new NotNull(message: 'Veuillez choisir un client'),
                 ],
-            ])
-            ->add('status', ChoiceType::class, [
-                'choices' => [
-                    'Brouillon' => 'draft',
-                    'En attente de paiement' => 'pending_payment',
-                ],
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez choisir un statut'),
-                ],
-            ])
-            ->add('invoiceItems', CollectionType::class, [
-                'entry_type' => InvoiceItemType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                "label" => false
             ])
         ;
     }
