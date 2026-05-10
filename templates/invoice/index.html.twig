@@ -1,0 +1,92 @@
+{% extends 'layout/sidebar.html.twig' %}
+
+{% block title %}
+	Factures
+{% endblock %}
+
+{% block content %}
+
+	<div class="flex items-center justify-between mb-6">
+		<h1 class="text-2xl font-bold text-[#101828]">Factures</h1>
+		<a href="{{ path('app_invoice_new') }}" data-turbo="false" class="flex items-center gap-2 bg-[#155DFC] text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+			Créer une facture
+		</a>
+	</div>
+
+	{# Filter #}
+	<div class="flex gap-2 mb-4">
+		<a href="{{ path('app_invoice_index') }}" class="px-4 py-1.5 rounded-lg text-sm transition-colors {{ currentFilter == 'all' ? 'bg-[#EFF6FF] text-[#1447E6] font-medium' : 'text-[#4A5565] over:bg-gray-100' }}">Toutes</a>
+
+		<a href="{{ path('app_invoice_index', {'status': 'draft'}) }}" class="px-4 py-1.5 rounded-lg text-sm transition-colors {{ currentFilter == 'draft' ? 'bg-[#F3F4F6] text-[#4A5565] font-medium' : 'text-[#4A5565] hover:bg-gray-100' }}">Brouillons</a>
+
+		<a href="{{ path('app_invoice_index', {'status': 'pending_payment'}) }}" class="px-4 py-1.5 rounded-lg text-sm transition-colors {{ currentFilter == 'pending_payment' ? 'bg-[#FFEDD4] text-[#F54900] font-medium' : 'text-[#4A5565] hover:bg-gray-100' }}">En attente</a>
+
+		<a href="{{ path('app_invoice_index', {'status': 'paid'}) }}" class="px-4 py-1.5 rounded-lg text-sm transition-colors {{ currentFilter == 'paid' ? 'bg-[#DCFCE7] text-[#00A63E] font-medium' : 'text-[#4A5565] hover:bg-gray-100' }}">Payées</a>
+	</div>
+
+	{# Table #}
+	<div
+		class="bg-white rounded-[14px] border border-[#F3F4F6]" style="box-shadow: 0 1px 2px rgba(0,0,0,0.10), 0 3px 0px -1px rgba(0,0,0,0.10);">
+
+		{# Header #}
+		<div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_120px] border-b border-[#F3F4F6] px-6 py-3">
+			<span class="text-[14px] font-bold text-[#101828]">Numéro</span>
+			<span class="text-[14px] font-bold text-[#101828]">Date</span>
+			<span class="text-[14px] font-bold text-[#101828]">Client</span>
+			<span class="text-[14px] font-bold text-[#101828]">Total TTC</span>
+			<span class="text-[14px] font-bold text-[#101828]">Statut</span>
+			<span class="text-[14px] font-bold text-[#101828] text-right">Actions</span>
+		</div>
+
+		{# Factures #}
+		{% for invoice in invoices %}
+			<div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_120px] items-center px-6 border-b border-black/10 last:border-b-0" style="height: 57px;">
+				<span class="text-[14px] text-[#101828] font-medium">{{ invoice.number }}</span>
+				<span class="text-[14px] text-[#4A5565]">{{ invoice.createdAt | date('d/m/Y') }}</span>
+				<span class="text-[14px] text-[#101828]">{{ invoice.client.name }}</span>
+				<span class="text-[14px] text-[#101828]">{{ invoice.totalTtc }}
+					€</span>
+
+				{# Statut #}
+				{% if invoice.status == 'draft' %}
+					<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit bg-[#F3F4F6] text-[#4A5565]">
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+						Brouillon
+					</span>
+				{% elseif invoice.status == 'pending_payment' %}
+					<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit bg-[#FFEDD4] text-[#F54900]">
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+						En attente
+					</span>
+				{% elseif invoice.status == 'paid' %}
+					<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit bg-[#DCFCE7] text-[#00A63E]">
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+						Payée
+					</span>
+				{% endif %}
+
+				<div class="flex items-center justify-end gap-2">
+					<a href="#" class="flex items-center gap-1 text-xs text-[#4A5565] hover:text-[#101828]">
+					{# <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}" class="flex items-center gap-1 text-xs text-[#4A5565] hover:text-[#101828]"> #}
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+						Détails
+					</a>
+					{% if invoice.status == 'draft' %}
+						<a href="#">
+						{# <a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}"> #}
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="#155DFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+						</a>
+					{% endif %}
+				</div>
+			</div>
+		{% else %}
+			<div class="px-6 py-8 text-center text-[#4A5565]">
+				Aucune facture pour le moment.
+				<a href="{{ path('app_invoice_new') }}" data-turbo="false" class="text-[#155DFC] hover:underline ml-1">Créer la première</a>
+			</div>
+		{% endfor %}
+
+	</div>
+
+{% endblock %}

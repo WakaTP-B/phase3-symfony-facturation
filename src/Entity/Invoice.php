@@ -40,7 +40,7 @@ class Invoice
     /**
      * @var Collection<int, InvoiceItem>
      */
-    #[ORM\OneToMany(targetEntity: InvoiceItem::class, mappedBy: 'invoice', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: InvoiceItem::class, mappedBy: 'invoice', orphanRemoval: true, cascade: ['persist'])]
     private Collection $invoiceItems;
 
     public function __construct()
