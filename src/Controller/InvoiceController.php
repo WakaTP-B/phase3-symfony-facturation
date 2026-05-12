@@ -36,18 +36,14 @@ final class InvoiceController extends AbstractController
     }
 
     #[Route('/new', name: 'app_invoice_new', methods: ['GET', 'POST'])]
-    public function new(
-        Request $request,
-        EntityManagerInterface $em,
-        InvoiceRepository $invoiceRepository,
-        ProductRepository $productRepository
-    ): Response {
+    public function new(Request $request, EntityManagerInterface $em, InvoiceRepository $invoiceRepository, ProductRepository $productRepository): Response
+    {
         $invoice = new Invoice();
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // 1. Utilisateur connecté
+            // User connecté
             $invoice->setUser($this->getUser());
 
             // 2. Date de création
@@ -62,7 +58,7 @@ final class InvoiceController extends AbstractController
             );
             $invoice->setNumber($prefix . ($countThisMonth + 1));
 
-            // 4. Statut selon bouton cliqué
+            // 4. Statut
             $saveAs = $request->request->get('save_as', 'draft');
             $invoice->setStatus($saveAs === 'pending' ? 'pending_payment' : 'draft');
 
@@ -75,12 +71,20 @@ final class InvoiceController extends AbstractController
                 $item->setInvoice($invoice);
                 $item->setQuantity((int) $line['quantity']);
 
-                $product = new Product();
-                $product->setName($line['name']);
-                $product->setPrice($line['price']);
-                $product->setDescription('');
-                $product->setUnit('piece');
-                $em->persist($product);
+                // Check if exist
+                $product = $productRepository->findOneBy([
+                    'name' => $line['name'],
+                    'price' => $line['price']
+                ]);
+
+                if (!$product) {
+                    $product = new Product();
+                    $product->setName($line['name']);
+                    $product->setPrice($line['price']);
+                    $product->setDescription('');
+                    $product->setUnit('piece');
+                    $em->persist($product);
+                }
 
                 $item->setProduct($product);
                 $invoice->addInvoiceItem($item);
@@ -102,33 +106,6 @@ final class InvoiceController extends AbstractController
             'existing_lines' => $request->request->all('invoice_lines') ?? [],
 
         ]);
-    }
-
-    #[Route('/{id}', name: 'app_invoice_show', methods: ['GET'])]
-    public function show(Invoice $invoice): Response
-    {
-        return $this->render('invoice/show.html.twig', [
-            'invoice' => $invoice,
-        ]);
-    }
-    #[Route('/{id}/validate', name: 'app_invoice_validate', methods: ['POST'])]
-    public function validate(Invoice $invoice, EntityManagerInterface $em): Response
-    {
-        if ($invoice->getStatus() === 'draft') {
-            $invoice->setStatus('pending_payment');
-            $em->flush();
-        }
-        return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
-    }
-
-    #[Route('/{id}/pay', name: 'app_invoice_pay', methods: ['POST'])]
-    public function pay(Invoice $invoice, EntityManagerInterface $em): Response
-    {
-        if ($invoice->getStatus() === 'pending_payment') {
-            $invoice->setStatus('paid');
-            $em->flush();
-        }
-        return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'app_invoice_edit', methods: ['GET', 'POST'])]
@@ -159,12 +136,20 @@ final class InvoiceController extends AbstractController
                 $item->setInvoice($invoice);
                 $item->setQuantity((int) $line['quantity']);
 
-                $product = new Product();
-                $product->setName($line['name']);
-                $product->setPrice($line['price']);
-                $product->setDescription('');
-                $product->setUnit('piece');
-                $em->persist($product);
+                // Check if exist
+                $product = $productRepository->findOneBy([
+                    'name' => $line['name'],
+                    'price' => $line['price']
+                ]);
+
+                if (!$product) {
+                    $product = new Product();
+                    $product->setName($line['name']);
+                    $product->setPrice($line['price']);
+                    $product->setDescription('');
+                    $product->setUnit('piece');
+                    $em->persist($product);
+                }
 
                 $item->setProduct($product);
                 $invoice->addInvoiceItem($item);
@@ -195,5 +180,33 @@ final class InvoiceController extends AbstractController
             }
         }
         return $this->redirectToRoute('app_invoice_index');
+    }
+
+    #[Route('/{id}', name: 'app_invoice_show', methods: ['GET'])]
+    public function show(Invoice $invoice): Response
+    {
+        return $this->render('invoice/show.html.twig', [
+            'invoice' => $invoice,
+        ]);
+    }
+
+    #[Route('/{id}/validate', name: 'app_invoice_validate', methods: ['POST'])]
+    public function validate(Invoice $invoice, EntityManagerInterface $em): Response
+    {
+        if ($invoice->getStatus() === 'draft') {
+            $invoice->setStatus('pending_payment');
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
+    }
+
+    #[Route('/{id}/pay', name: 'app_invoice_pay', methods: ['POST'])]
+    public function pay(Invoice $invoice, EntityManagerInterface $em): Response
+    {
+        if ($invoice->getStatus() === 'pending_payment') {
+            $invoice->setStatus('paid');
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
     }
 }

@@ -59,6 +59,10 @@
 								<option value="{{ product.name }}" data-price="{{ product.price }}">
 									{{ product.name }}
 									—
+									{% if product.description %}
+										{{ product.description }}
+										—
+									{% endif %}
 									{{ product.price }}
 									€
 								</option>

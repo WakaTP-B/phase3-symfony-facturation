@@ -26,9 +26,7 @@ class ProductType extends AbstractType
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez indiquer une description'),
-                ],
+                'required' => false
             ])
             ->add('price', MoneyType::class, [
                 'currency' => false,
