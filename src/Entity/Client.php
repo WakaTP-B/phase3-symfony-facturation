@@ -33,6 +33,10 @@ class Client
     #[ORM\Column(length: 34)]
     private ?string $rib = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     /**
      * @var Collection<int, Invoice>
      */
@@ -167,6 +171,17 @@ class Client
             }
         }
 
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }

@@ -81,6 +81,7 @@ export default class extends Controller {
             <input type="hidden" name="invoice_lines[${index}][name]" value="${name}">
             <input type="hidden" name="invoice_lines[${index}][price]" value="${price}">
             <input type="hidden" name="invoice_lines[${index}][quantity]" value="${quantity}">
+            <input type="hidden" name="invoice_lines[${index}][description]" value="">
         `
 
         this.itemsTarget.appendChild(row)
@@ -111,6 +112,7 @@ export default class extends Controller {
         <input type="hidden" name="invoice_lines[${index}][name]" value="${name}">
         <input type="hidden" name="invoice_lines[${index}][price]" value="${price}">
         <input type="hidden" name="invoice_lines[${index}][quantity]" value="${quantity}">
+        <input type="hidden" name="invoice_lines[${index}][description]" value="">
     `
         this.itemsTarget.appendChild(row)
         this.indexValue = index + 1

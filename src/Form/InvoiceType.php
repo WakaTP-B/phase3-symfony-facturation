@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\Client;
 use App\Entity\Invoice;
+use App\Repository\ClientRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,17 +21,22 @@ class InvoiceType extends AbstractType
                 'choice_label' => 'name',
                 'placeholder' => 'Choisir un client',
                 'label' => false,
+                'query_builder' => function (ClientRepository $cr) use ($options) {
+                    return $cr->createQueryBuilder('c')
+                        ->where('c.user = :user')
+                        ->setParameter('user', $options['user']);
+                },
                 'constraints' => [
                     new NotNull(message: 'Veuillez choisir un client'),
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Invoice::class,
+            'user' => null,
         ]);
     }
 }

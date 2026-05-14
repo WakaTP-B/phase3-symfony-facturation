@@ -131,13 +131,15 @@
 			{% for item in invoice.invoiceItems %}
 				<div class="grid grid-cols-[3fr_1fr_1fr_1fr] gap-4 py-4 border-b border-[#F3F4F6]">
 					<div>
-						<p class="text-sm font-medium text-[#101828]">{{ item.product.name }}</p>
-						<p class="text-xs text-[#4A5565]">{{ item.product.description }}</p>
+						<p class="text-sm font-medium text-[#101828]">{{ item.name }}</p>
+						{% if item.description %}
+							<p class="text-xs text-[#4A5565]">{{ item.description }}</p>
+						{% endif %}
 					</div>
 					<span class="text-sm text-[#4A5565] text-center">{{ item.quantity }}</span>
-					<span class="text-sm text-[#4A5565] text-right">{{ item.product.price }}
+					<span class="text-sm text-[#4A5565] text-right">{{ item.unitPrice }}
 						€</span>
-					<span class="text-sm font-bold text-[#101828] text-right">{{ (item.product.price * item.quantity) | number_format(2, '.', ' ') }}
+					<span class="text-sm font-bold text-[#101828] text-right">{{ (item.unitPrice * item.quantity) | number_format(2, '.', ' ') }}
 						€</span>
 				</div>
 			{% endfor %}

@@ -6,7 +6,6 @@ use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Entity\Invoice;
 use App\Entity\InvoiceItem;
-use App\Entity\Product;
 use App\Form\InvoiceType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +38,9 @@ final class InvoiceController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, InvoiceRepository $invoiceRepository, ProductRepository $productRepository): Response
     {
         $invoice = new Invoice();
-        $form = $this->createForm(InvoiceType::class, $invoice);
+        $form = $this->createForm(InvoiceType::class, $invoice, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -70,23 +71,10 @@ final class InvoiceController extends AbstractController
                 $item = new InvoiceItem();
                 $item->setInvoice($invoice);
                 $item->setQuantity((int) $line['quantity']);
+                $item->setName($line['name']);
+                $item->setUnitPrice($line['price']);
+                $item->setDescription($line['description'] ?? null);
 
-                // Check if exist
-                $product = $productRepository->findOneBy([
-                    'name' => $line['name'],
-                    'price' => $line['price']
-                ]);
-
-                if (!$product) {
-                    $product = new Product();
-                    $product->setName($line['name']);
-                    $product->setPrice($line['price']);
-                    $product->setDescription('');
-                    $product->setUnit('piece');
-                    $em->persist($product);
-                }
-
-                $item->setProduct($product);
                 $invoice->addInvoiceItem($item);
                 $total += $line['price'] * $line['quantity'];
                 $em->persist($item);
@@ -102,7 +90,7 @@ final class InvoiceController extends AbstractController
 
         return $this->render('invoice/new.html.twig', [
             'form' => $form,
-            'products' => $productRepository->findAll(),
+            'products' => $productRepository->findBy(['user' => $this->getUser()]),
             'existing_lines' => $request->request->all('invoice_lines') ?? [],
 
         ]);
@@ -115,7 +103,9 @@ final class InvoiceController extends AbstractController
             return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
         }
 
-        $form = $this->createForm(InvoiceType::class, $invoice);
+        $form = $this->createForm(InvoiceType::class, $invoice, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -135,23 +125,10 @@ final class InvoiceController extends AbstractController
                 $item = new InvoiceItem();
                 $item->setInvoice($invoice);
                 $item->setQuantity((int) $line['quantity']);
+                $item->setName($line['name']);
+                $item->setUnitPrice($line['price']);
+                $item->setDescription($line['description'] ?? null);
 
-                // Check if exist
-                $product = $productRepository->findOneBy([
-                    'name' => $line['name'],
-                    'price' => $line['price']
-                ]);
-
-                if (!$product) {
-                    $product = new Product();
-                    $product->setName($line['name']);
-                    $product->setPrice($line['price']);
-                    $product->setDescription('');
-                    $product->setUnit('piece');
-                    $em->persist($product);
-                }
-
-                $item->setProduct($product);
                 $invoice->addInvoiceItem($item);
                 $total += $line['price'] * $line['quantity'];
                 $em->persist($item);
@@ -166,7 +143,7 @@ final class InvoiceController extends AbstractController
         return $this->render('invoice/edit.html.twig', [
             'form' => $form,
             'invoice' => $invoice,
-            'products' => $productRepository->findAll(),
+            'products' => $productRepository->findBy(['user' => $this->getUser()]),
         ]);
     }
 

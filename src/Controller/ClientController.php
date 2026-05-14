@@ -45,14 +45,16 @@ final class ClientController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                $client->setUser($this->getUser());
                 $entityManager->persist($client);
                 $entityManager->flush();
+
                 return $this->redirectToRoute('app_client_index', ['new' => 1]);
             }
         }
 
         return $this->render('client/index.html.twig', [
-            'clients' => $clientRepository->findAll(),
+            'clients' => $clientRepository->findBy(['user' => $this->getUser()]),
             'form' => $form,
             'showForm' => $showNewForm || $editId,
             'editingClient' => $editingClient,

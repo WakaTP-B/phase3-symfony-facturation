@@ -15,11 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProductController extends AbstractController
 {
     #[Route(name: 'app_product_index', methods: ['GET', 'POST'])]
-    public function index(
-        Request $request,
-        ProductRepository $productRepository,
-        EntityManagerInterface $entityManager
-    ): Response {
+    public function index(Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager): Response
+    {
         $editId = $request->query->getInt('edit');
         $showNewForm = $request->query->getBoolean('new');
         $form = null;
@@ -38,7 +35,6 @@ final class ProductController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_product_index', ['edit' => $editId]);
             }
-            
         } elseif ($showNewForm) {
             // Create
             $product = new Product();
@@ -46,6 +42,7 @@ final class ProductController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                $product->setUser($this->getUser());
                 $entityManager->persist($product);
                 $entityManager->flush();
                 return $this->redirectToRoute('app_product_index', ['new' => 1]);
@@ -53,14 +50,13 @@ final class ProductController extends AbstractController
         }
 
         return $this->render('product/index.html.twig', [
-            'products' => $productRepository->findAll(),
+            'products' => $productRepository->findBy(['user' => $this->getUser()]),
             'form' => $form,
             'showForm' => $showNewForm || $editId,
             'editingProduct' => $editingProduct,
         ]);
     }
 
- 
     #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
