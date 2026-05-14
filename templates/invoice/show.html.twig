@@ -19,6 +19,12 @@
 			</div>
 		{% endfor %}
 
+		{% for message in app.flashes('error') %}
+			<div class="mb-4 px-4 py-3 bg-[#FEE2E2] text-[#E7000B] rounded-lg text-sm">
+				{{ message }}
+			</div>
+		{% endfor %}
+
 		<div class="flex items-start justify-between">
 			<div>
 				<div class="flex items-center gap-3 mb-1">
@@ -49,20 +55,20 @@
 			<div class="flex items-center gap-2">
 				{% if invoice.status == 'draft' %}
 					<form method="post" action="{{ path('app_invoice_validate', {'id': invoice.id}) }}" data-turbo="false" onsubmit="return confirm('Valider cette facture ?')">
-						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-green-100">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-[#DCFCE7] hover:border-[#13c545] transition-colors cursor-pointer">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
 							Valider la facture
 						</button>
 					</form>
 					<form method="post" action="{{ path('app_invoice_delete', {'id': invoice.id}) }}" data-turbo="false" onsubmit="return confirm('Supprimer cette facture ?')">
 						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ invoice.id) }}">
-						<button type="submit" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#E7000B] text-sm rounded-[10px] hover:bg-red-50 hover:text-[#E7000B] hover:border-[#E7000B] transition-colors cursor-pointer">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#E7000B] text-sm rounded-[10px] hover:bg-red-50 hover:border-[#E7000B] transition-colors cursor-pointer">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
 							Supprimer
 						</button>
 					</form>
 				{% elseif invoice.status == 'pending_payment' %}
-					<a href="{{ path('app_invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+					<a href="{{ path('app_invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-[#EFF6FF] hover:text-[#155DFC] hover:border-[#155DFC] transition-colors">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
 						PDF
 					</a>
@@ -73,7 +79,7 @@
 						</button>
 					</form>
 					<form method="post" action="{{ path('app_invoice_pay', {'id': invoice.id}) }}" data-turbo="false" onsubmit="return confirm('Marquer cette facture comme payée ?')">
-						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-green-100">
+						<button type="submit" class="flex items-center gap-2 px-4 py-2 bg-[#C6FBD0] border border-[#106629]/10 text-[#106629] text-sm rounded-[10px] hover:bg-[#DCFCE7] hover:border-[#13c545] transition-colors cursor-pointer">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
 							Valider le paiement
 						</button>
