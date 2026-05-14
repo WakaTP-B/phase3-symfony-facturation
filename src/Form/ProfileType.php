@@ -40,7 +40,7 @@ class ProfileType extends AbstractType
             ->add('cgv', TextareaType::class, [
                 'label' => false,
                 'required' => false,
-                'mapped' => false,
+                'mapped' => true,
             ])
         ;
     }

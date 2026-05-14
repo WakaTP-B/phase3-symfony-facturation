@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Entity\Invoice;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Sensiolabs\GotenbergBundle\GotenbergPdfInterface;
 
 #[Route('/invoice')]
 final class InvoiceController extends AbstractController
@@ -47,10 +49,10 @@ final class InvoiceController extends AbstractController
             // User connecté
             $invoice->setUser($this->getUser());
 
-            // 2. Date de création
+            // Date de création
             $invoice->setCreatedAt(new \DateTimeImmutable());
 
-            // 3. Générer le numéro FACT-YYYYMMDD-N
+            // Générer le numéro FACT-YYYYMMDD-N
             $today = new \DateTimeImmutable();
             $prefix = 'FACT-' . $today->format('Ymd') . '-';
             $countThisMonth = $invoiceRepository->countByMonth(
@@ -59,11 +61,11 @@ final class InvoiceController extends AbstractController
             );
             $invoice->setNumber($prefix . ($countThisMonth + 1));
 
-            // 4. Statut
+            // Statut
             $saveAs = $request->request->get('save_as', 'draft');
             $invoice->setStatus($saveAs === 'pending' ? 'pending_payment' : 'draft');
 
-            // 5. Lignes depuis inputs cachés Stimulus
+            // Lignes depuis inputs cachés Stimulus
             $lines = $request->request->all('invoice_lines') ?? [];
             $total = 0;
 
@@ -74,6 +76,22 @@ final class InvoiceController extends AbstractController
                 $item->setName($line['name']);
                 $item->setUnitPrice($line['price']);
                 $item->setDescription($line['description'] ?? null);
+
+                // Create product in BDD if not exist
+                $existingProduct = $productRepository->findOneBy([
+                    'name' => $line['name'],
+                    'user' => $this->getUser(),
+                ]);
+
+                if (!$existingProduct) {
+                    $product = new Product();
+                    $product->setName($line['name']);
+                    $product->setPrice($line['price']);
+                    $product->setDescription($line['description'] ?? null);
+                    $product->setUnit('piece');
+                    $product->setUser($this->getUser());
+                    $em->persist($product);
+                }
 
                 $invoice->addInvoiceItem($item);
                 $total += $line['price'] * $line['quantity'];
@@ -128,6 +146,22 @@ final class InvoiceController extends AbstractController
                 $item->setName($line['name']);
                 $item->setUnitPrice($line['price']);
                 $item->setDescription($line['description'] ?? null);
+
+                // Create product in BDD if not exist
+                $existingProduct = $productRepository->findOneBy([
+                    'name' => $line['name'],
+                    'user' => $this->getUser(),
+                ]);
+
+                if (!$existingProduct) {
+                    $product = new Product();
+                    $product->setName($line['name']);
+                    $product->setPrice($line['price']);
+                    $product->setDescription($line['description'] ?? null);
+                    $product->setUnit('piece');
+                    $product->setUser($this->getUser());
+                    $em->persist($product);
+                }
 
                 $invoice->addInvoiceItem($item);
                 $total += $line['price'] * $line['quantity'];
@@ -185,5 +219,22 @@ final class InvoiceController extends AbstractController
             $em->flush();
         }
         return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_invoice_pdf', methods: ['GET'])]
+    public function pdf(Invoice $invoice, GotenbergPdfInterface $gotenberg): Response
+    {
+        if ($invoice->getStatus() === 'draft') {
+            return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
+        }
+
+        return $gotenberg->html()
+            ->content('invoice/pdf.html.twig', [
+                'invoice' => $invoice,
+            ])
+            ->fileName($invoice->getNumber())
+            ->generate()
+            ->setDisposition('inline')
+            ->stream();
     }
 }
