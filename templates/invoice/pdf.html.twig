@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; color: #101828; margin: 40px; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .company-name { font-weight: bold; font-size: 16px; }
+        .facture-title { font-weight: bold; font-size: 18px; text-align: right; letter-spacing: 2px; }
+        .client-box { background: #F9FAFB; border: 1px solid #F3F4F6; border-radius: 8px; padding: 20px; width: 350px; margin-left: auto; margin-bottom: 40px; }
+        .client-label { font-size: 10px; color: #4A5565; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .client-name { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        thead tr { border-bottom: 2px solid #101828; }
+        th { padding: 8px 4px; text-align: left; font-size: 13px; }
+        th.right { text-align: right; }
+        th.center { text-align: center; }
+        td { padding: 12px 4px; font-size: 13px; border-bottom: 1px solid #F3F4F6; }
+        td.right { text-align: right; }
+        td.center { text-align: center; }
+        .totals { display: flex; justify-content: flex-end; margin-bottom: 30px; }
+        .totals-box { width: 250px; }
+        .totals-row { display: flex; justify-content: space-between; padding: 6px 0; }
+        .totals-row.total { border-top: 2px solid #101828; font-weight: bold; font-size: 16px; }
+        .tva { font-size: 10px; color: #4A5565; text-align: right; }
+        .footer { border-top: 1px solid #F3F4F6; padding-top: 20px; font-size: 12px; color: #4A5565; }
+        .footer-title { font-weight: bold; color: #101828; margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+
+    {# Header #}
+    <div class="header">
+        <div>
+            <p class="company-name">{{ invoice.user.companyName }}</p>
+            <p>{{ invoice.user.firstName }} {{ invoice.user.lastName }}</p>
+            <p>{{ invoice.user.email }}</p>
+            {% if invoice.user.siret %}
+                <p>SIRET : {{ invoice.user.siret }}</p>
+            {% endif %}
+        </div>
+        <div>
+            <p class="facture-title">FACTURE</p>
+            <p style="text-align:right">N° {{ invoice.number }}</p>
+            <p style="text-align:right">Date : {{ invoice.createdAt | date('d/m/Y') }}</p>
+        </div>
+    </div>
+
+    {# Client #}
+    <div class="client-box">
+        <p class="client-label">Facturé à</p>
+        <p class="client-name">{{ invoice.client.name }}</p>
+        <p>{{ invoice.client.address | replace({'\n': ', ', '\r': ''}) }}</p>
+        <p>{{ invoice.client.email }}</p>
+        {% if invoice.client.siret %}
+            <p>SIRET : {{ invoice.client.siret }}</p>
+        {% endif %}
+    </div>
+
+    {# Tableau #}
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="center">Qté</th>
+                <th class="right">Prix Unitaire</th>
+                <th class="right">Total TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.invoiceItems %}
+            <tr>
+                <td>
+                    <strong>{{ item.name }}</strong>
+                    {% if item.description %}<br><small style="color:#4A5565">{{ item.description }}</small>{% endif %}
+                </td>
+                <td class="center">{{ item.quantity }}</td>
+                <td class="right">{{ item.unitPrice }} €</td>
+                <td class="right"><strong>{{ (item.unitPrice * item.quantity) | number_format(2, '.', ' ') }} €</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# Totaux #}
+    <div class="totals">
+        <div class="totals-box">
+            <div class="totals-row">
+                <span>Total HT</span>
+                <span>{{ invoice.totalTtc | number_format(2, '.', ' ') }} €</span>
+            </div>
+            <div class="totals-row total">
+                <span>Total TTC</span>
+                <span>{{ invoice.totalTtc | number_format(2, '.', ' ') }} €</span>
+            </div>
+            <p class="tva">TVA non applicable, art. 293 B du CGI</p>
+        </div>
+    </div>
+
+    {# Footer #}
+    <div class="footer">
+        <p class="footer-title">Conditions de paiement</p>
+        <p>Coordonnées bancaires pour le paiement :</p>
+        <p>{{ invoice.user.iban }}</p>
+        {% if invoice.user.cgv %}
+            <br>
+            <p class="footer-title">Conditions Générales de Vente</p>
+            <p>{{ invoice.user.cgv }}</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

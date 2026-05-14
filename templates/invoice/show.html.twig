@@ -56,7 +56,7 @@
 						</button>
 					</form>
 				{% elseif invoice.status == 'pending_payment' %}
-					<a href="#" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
+					<a href="{{ path('app_invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] text-[#4A5565] text-sm rounded-[10px] hover:bg-gray-50">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
 						PDF
 					</a>
@@ -167,6 +167,11 @@
 			<p class="text-sm font-medium text-[#101828] mb-2">Conditions de paiement</p>
 			<p class="text-xs text-[#4A5565]">Coordonnées bancaires pour le paiement :</p>
 			<p class="text-xs text-[#4A5565]">{{ invoice.user.iban }}</p>
+			{% if invoice.user.cgv %}
+				<br>
+				<p class="text-sm font-medium text-[#101828] mb-2 mt-4">Conditions Générales de Vente</p>
+				<p class="text-xs text-[#4A5565]">{{ invoice.user.cgv }}</p>
+			{% endif %}
 		</div>
 
 	</div>

@@ -50,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 14, nullable: true)]
     private ?string $siret = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $cgv = null;
+
     /**
      * @var Collection<int, Invoice>
      */
@@ -70,7 +73,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }
-
     public function setEmail(string $email): static
     {
         $this->email = $email;
@@ -117,7 +119,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
-
     public function setPassword(string $password): static
     {
         $this->password = $password;
@@ -131,7 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -140,7 +141,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->first_name;
     }
-
     public function setFirstName(string $first_name): static
     {
         $this->first_name = $first_name;
@@ -152,7 +152,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->last_name;
     }
-
     public function setLastName(string $last_name): static
     {
         $this->last_name = $last_name;
@@ -164,7 +163,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->company_name;
     }
-
     public function setCompanyName(string $company_name): static
     {
         $this->company_name = $company_name;
@@ -176,7 +174,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->iban;
     }
-
     public function setIban(string $iban): static
     {
         $this->iban = $iban;
@@ -188,7 +185,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->siret;
     }
-
     public function setSiret(?string $siret): static
     {
         $this->siret = $siret;
@@ -217,12 +213,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeInvoice(Invoice $invoice): static
     {
         if ($this->invoices->removeElement($invoice)) {
-            // set the owning side to null (unless already changed)
             if ($invoice->getUser() === $this) {
                 $invoice->setUser(null);
             }
         }
+        return $this;
+    }
 
+    public function getCgv(): ?string
+    {
+        return $this->cgv;
+    }
+
+    public function setCgv(?string $cgv): static
+    {
+        $this->cgv = $cgv;
         return $this;
     }
 }
