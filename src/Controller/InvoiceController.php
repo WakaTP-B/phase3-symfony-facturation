@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Sensiolabs\GotenbergBundle\GotenbergPdfInterface;
 
 #[Route('/invoice')]
@@ -236,5 +238,42 @@ final class InvoiceController extends AbstractController
             ->generate()
             ->setDisposition('inline')
             ->stream();
+    }
+
+    #[Route('/{id}/send', name: 'app_invoice_send', methods: ['POST'])]
+    public function send(Invoice $invoice, GotenbergPdfInterface $gotenberg, MailerInterface $mailer): Response
+    {
+        if ($invoice->getStatus() === 'draft') {
+            return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
+        }
+
+        // Create PDF
+        $response = $gotenberg->html()
+            ->content('invoice/pdf.html.twig', ['invoice' => $invoice])
+            ->fileName($invoice->getNumber())
+            ->generate()
+            ->stream();
+
+        $pdfContent = '';
+        ob_start();
+        $gotenberg->html()
+            ->content('invoice/pdf.html.twig', ['invoice' => $invoice])
+            ->fileName($invoice->getNumber())
+            ->generate()
+            ->process();
+        $pdfContent = ob_get_clean();
+
+        // Send email
+        $email = (new Email())
+            ->from($invoice->getUser()->getEmail())
+            ->to($invoice->getClient()->getEmail())
+            ->subject('Facture ' . $invoice->getNumber())
+            ->text('Veuillez trouver ci-joint votre facture ' . $invoice->getNumber() . '.')
+            ->attach($pdfContent, $invoice->getNumber() . '.pdf', 'application/pdf');
+
+        $mailer->send($email);
+
+        $this->addFlash('success', 'Facture envoyée à ' . $invoice->getClient()->getEmail());
+        return $this->redirectToRoute('app_invoice_show', ['id' => $invoice->getId()]);
     }
 }
