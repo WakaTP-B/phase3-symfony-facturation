@@ -248,13 +248,6 @@ final class InvoiceController extends AbstractController
         }
 
         // Create PDF
-        $response = $gotenberg->html()
-            ->content('invoice/pdf.html.twig', ['invoice' => $invoice])
-            ->fileName($invoice->getNumber())
-            ->generate()
-            ->stream();
-
-        $pdfContent = '';
         ob_start();
         $gotenberg->html()
             ->content('invoice/pdf.html.twig', ['invoice' => $invoice])
